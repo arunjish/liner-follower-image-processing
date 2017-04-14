@@ -54,6 +54,8 @@ def directRobot(count_b_top,count_b_bottom,count_b_left,count_b_right,skipped_fr
                 print "\t\t\tbottom = "+str(count_b_bottom)
 		
 		global direction
+		if skipped_frame:
+			return True
 
                 if count_b_top > 70 and count_b_bottom > 70 and count_b_left < 70 and count_b_right < 70:
                         forward(0)
@@ -105,8 +107,14 @@ try:
 			print "initial skip"
 			rawCapture.truncate(0)
 			continue	
-	
+
+		if skip_frame_count>0:
+			skip_frame_count-=1
+			print "frame skip due to junction"
+			rawCapture.truncate(0)
+			continue	
 		count+=1
+
 
 		# checking for incompleate frames by taking the count of 10 th row 
 		w_count=0
@@ -129,11 +137,12 @@ try:
 				count_b_right+=1
 		#print "count of w = " + str(w_count)
 		
-		if w_count < 100:
+		if w_count < 10:
 			skipped_frame= True
 			print "\t\t\tskipped frame--white count = "+str(w_count)
-			follow_previous_direction()
-
+			#follow_previous_direction()
+			forward(0)
+			skip_frame_count=5
 			 # clear the stream in preparation for the next frame
 			#cv2.imwrite("skipped_Frame"+str(count)+".jpg",image_RGB)
 
@@ -145,6 +154,7 @@ try:
 		exit=directRobot(count_b_top,count_b_bottom,count_b_left,count_b_right,skipped_frame)
 		if exit :
 			print "break"
+			stop()
 			break
 		skipped_frame=False
 		
@@ -160,4 +170,4 @@ try:
 except KeyboardInterrupt:
 	print "Goodbye"
 	stop()
-	exit(0)
+	exit()
