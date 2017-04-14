@@ -14,21 +14,42 @@ GPIO.setup(ML2,GPIO.OUT)
 GPIO.setup(MR1,GPIO.OUT)
 GPIO.setup(MR2,GPIO.OUT)
 
-while True :
-
+def forward():
 	GPIO.output(ML1, True)
-	GPIO.output(ML2, False)
+        GPIO.output(ML2, False)
 
-	GPIO.output(MR1, True)
-	GPIO.output(MR2, False)
-	print "forward"  
-	time.sleep(5)
-
+        GPIO.output(MR1, True)
+        GPIO.output(MR2, False)
+        print "forward"
+def backward():
 	GPIO.output(ML2, True)
         GPIO.output(ML1, False)
 
         GPIO.output(MR2, True)
         GPIO.output(MR1, False)
-	print "Backwords"
-	time.sleep(5)
+        print "Backwords"
+
+def right():
+        GPIO.output(ML1, True)
+        GPIO.output(ML2, False)
+
+        GPIO.output(MR1, False)
+        GPIO.output(MR2, False)
+        print "Right"
+
+def left():
+        GPIO.output(ML1, False)
+        GPIO.output(ML2, False)
+
+        GPIO.output(MR1, True)
+        GPIO.output(MR2, False)
+        print "left"
+
+def stop():
+        GPIO.output(ML1, False)
+        GPIO.output(ML2, False)
+
+        GPIO.output(MR1, False)
+        GPIO.output(MR2, False)
+        print "Stop"
 
