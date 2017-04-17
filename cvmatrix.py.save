@@ -1,4 +1,5 @@
 
+
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
@@ -33,8 +34,23 @@ junction=False
 junction_T_count=0
 junction_plus_count=0
 
-def printFrame(im_bw):
-	for x in range(index_top,index_bottom+1):
+
+def direct(res_x):
+        if res_x[0][1]==0 and res_x[1][1]==0 and res_x[2][1]==0 :
+                forward(0.5)
+                stop()
+	elif res_x[1][0]==0 and res_x[1][1]==0 and res_x[2][1]==0 :
+                left(1)
+                stop()
+
+        else:
+                stop()
+
+
+
+
+def printFrame(im_bw,index_top,index_bottom):
+	for x in range(index_top,index_bottom):
 		
 		row_count_black=0
 		row_count_white=0
@@ -50,18 +66,99 @@ def printFrame(im_bw):
                 sys.stdout.write("\n")
 	
 
+def reduce(img_bw):
+	w,h=img_bw.shape
+	c_w_x = [[0 for i in range(3)] for j in range(3)]
+	c_b_x=[[0 for i in range(3)] for j in range(3)]
+	res_x=[[0 for i in range(3)] for j in range(3)]
 
+	for i in range(0,int(h/3)):
+		for j in range(0,int(w/3)):
+			if img_bw[i][j]==255:
+				c_w_x[0][0]+=1
+			else:
+				c_b_x[0][0]+=1
+			
+			if img_bw[i+83][j]==255:
+                                c_w_x[1][0]+=1
+                        else:
+                                c_b_x[1][0]+=1
+			
+			if img_bw[i+166][j]==255:
+                                c_w_x[2][0]+=1
+                        else:
+                                c_b_x[2][0]+=1
+			#########################
+			if img_bw[i][j+83]==255:
+                                c_w_x[0][1]+=1
+                        else:
+                                c_b_x[0][1]+=1
+
+                        if img_bw[i+83][j+83]==255:
+                                c_w_x[1][1]+=1
+                        else:
+                                c_b_x[1][1]+=1
+
+                        if img_bw[i+166][j+83]==255:
+                                c_w_x[2][1]+=1
+                        else:
+                                c_b_x[2][1]+=1
+			#############################
+
+			if img_bw[i][j+166]==255:
+                                c_w_x[0][2]+=1
+                        else:
+                                c_b_x[0][2]+=1
+
+                        if img_bw[i+83][j+166]==255:
+                                c_w_x[1][2]+=1
+                        else:
+                                c_b_x[1][2]+=1
+
+                        if img_bw[i+166][j+166]==255:
+                                c_w_x[2][2]+=1
+                        else:
+                                c_b_x[2][2]+=1
+
+        for i in range(0,3):
+                for j in range(0,3):
+                        if c_b_x[i][j] < c_w_x[i][j]:
+                                res_x[i][j]=1
+                        else:
+                                res_x[i][j]=0
+	"""
+	print "black"
+	for i in range(0,3):
+        	for j in range(0,3):
+			sys.stdout.write(str(c_b_x[i][j])+ "  ")
+		sys.stdout.write("\n")
+	print "\n\n White"	
+	for i in range(0,3):
+        	for j in range(0,3):
+                	sys.stdout.write(str(c_w_x[i][j])+ "  ")
+                sys.stdout.write("\n")
+        """    
+	print "\n\n result"
+        for i in range(0,3):
+                for j in range(0,3):
+                        sys.stdout.write(str(res_x[i][j])+ "  ")
+                sys.stdout.write("\n")
+
+	return res_x
 
 try:
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 		# grab the raw NumPy array representing the image, then initialize the timestamp
 		# and occupied/unoccupied text
-		image_RGB = frame.array
-		img_gray = cv2.cvtColor(image_RGB, cv2.COLOR_BGR2GRAY)
-		(thresh, im_bw) = cv2.threshold(img_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+		print "test"
+		img_RGB = frame.array
+		#cv2.imwrite("Frame"+str(count)+".jpg",image_RGB)
+		count+=1 
+		img_gray = cv2.cvtColor(img_RGB, cv2.COLOR_BGR2GRAY)
+		(thresh, img_bw) = cv2.threshold(img_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 		#(thresh, im_bw) = cv2.threshold(img_gray, 80, 255, cv2.THRESH_BINARY)
-
-		
+		#printFrame(img_bw,0,250)
+				
 		if initial_skip >0:
 			initial_skip-=1
 			print "initial skip"
@@ -73,8 +170,13 @@ try:
 			print "frame skip may be a junction ahead"
 			rawCapture.truncate(0)
 			continue	
-		#printFrame(im_bw)
 		
+
+		
+		res_x=reduce(img_bw)
+                direct(res_x)
+
+		"""
 		# checking for incompleate frames by taking the count of 10 th row 
 
 		count_b_top=0
@@ -146,7 +248,7 @@ try:
 				#break
 		skipped_frame=False
 		junction=False
-
+		"""
 		#clear the stream in preparation for the next frame
 		rawCapture.truncate(0)
 
@@ -159,3 +261,6 @@ except KeyboardInterrupt:
 	print "\n T = "+str(junction_T_count)+"\n + =  "+str(junction_plus_count)
 	stop()
 	exit(True)
+
+
+
