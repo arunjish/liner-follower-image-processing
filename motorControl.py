@@ -3,8 +3,8 @@ import time
 GPIO.setmode(GPIO.BCM) 
 GPIO.setwarnings(False)
 
-ML1= 17
-ML2= 27
+ML1= 14
+ML2= 15
 
 MR1= 23
 MR2= 24
@@ -89,46 +89,5 @@ def follow_previous_direction(direction):
                                 time.sleep(0.05)
                                 stop()
 
-
-
-def directRobot(count_b_top,count_b_bottom,count_b_left,count_b_right,skipped_frame,direction):
-
-                print "\n\n-------------------------------------------------------------------------------------------------------------\n"
-                print "\t\t\t top = "+ str(count_b_top)
-                print "left = "+str(count_b_left)
-                print "\t\t\t\t\t\tright =  "+ str(count_b_right)
-                print "\t\t\tbottom = "+str(count_b_bottom)
-
-                
-
-                if count_b_top > 70 and count_b_bottom > 70 and count_b_left < 70 and count_b_right < 70:
-                        forward(0)
-                        direcrion="f"
-                elif count_b_bottom>70 and count_b_right>70 and skipped_frame:
-                        right(0)
-                        direction="r"
-                elif  count_b_left>70 and not skipped_frame:
-                        left(0)
-                        direction="l"
-                        time.sleep(0.05)
-                        stop()
-                elif count_b_right>70 and not skipped_frame:
-                        right(0)
-                        direction="r"
-                        time.sleep(0.05)
-                        stop()
-                elif count_b_top < 70 and count_b_bottom < 70 and count_b_left < 70 and count_b_right < 70:
-                        print "full white"
-                        follow_previous_direction()
-
-                else :
-                        print "unkonwn condition"
-                        follow_previous_direction()
-                       # stop()
-
-
-                print "\n\n-------------------------------------------------------------------------------------------------------------\n\n"
-
-                
 
 
