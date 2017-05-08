@@ -140,7 +140,7 @@ def directBot(frame_res,edge):
                 printFrame(edge)
 		print "rta ==            ===     " + str(rta)
 		print "arunnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
-		if rta>0: 
+		if rta>2: 
 			print "\t\t\\t\t\t\t\t\t\t\t\t\t\tleft turn Ahead"
 		
                 	turn=True
@@ -216,7 +216,7 @@ def isBottomOk_after_turn(dir):
 try:
 	for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 		t1 = datetime.now()
-		"""
+
 		if initial_skip >0:
 			initial_skip-=1
 			print "initial skip"
@@ -226,10 +226,10 @@ try:
 			skip_frame_count-=1
 			rawCapture.truncate(0)
 			continue		
-		"""
+
 		img_RGB = frame.array
 		img_RGB=cv2.resize(img_RGB,(400,400))
-		img_RGB = img_RGB[0:320, 0:400]
+		img_RGB = img_RGB[0:220, 0:400]
 		edge=cv2.Canny(img_RGB,100,200)
 		#printFrame(edge)
 		frame_res= checkFrame(edge)

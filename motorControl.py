@@ -91,3 +91,6 @@ def follow_previous_direction(direction):
 
 
 
+
+#forward(1)
+#stop(0)
